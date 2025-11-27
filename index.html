@@ -6,6 +6,7 @@
     <title>BMI Calculator</title>
 </head>
 <body>
+
     <h2>BMI Calculator</h2>
 
     <label>Height (cm)</label>
@@ -14,36 +15,34 @@
     <label>Weight (kg)</label>
     <input type="number" id="weight">
 
-    <button onclick="calculateBMI()">Calculate</button>
+    <button onclick="calcBMI()">Calculate</button>
 
-    <p id="result"></p>
+    <h3 id="result"></h3>
 
-<script>
-async function calculateBMI() {
-    const height = document.getElementById("height").value;
-    const weight = document.getElementById("weight").value;
+    <script>
+        async function calcBMI() {
+            const height = document.getElementById("height").value;
+            const weight = document.getElementById("weight").value;
 
-    const response = await fetch("https://bmi-api-8be0.onrender.com/bmi", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            height: parseFloat(height),
-            weight: parseFloat(weight)
-        })
-    });
+            if (!height || !weight) {
+                document.getElementById("result").innerText = "Please enter both values.";
+                return;
+            }
 
-    const data = await response.json();
+            const url = `https://bmi-api-8be0.onrender.com/calc?height=${height}&weight=${weight}`;
 
-    if (response.ok) {
-        document.getElementById("result").textContent =
-            `BMI: ${data.bmi} – Category: ${data.category}`;
-    } else {
-        document.getElementById("result").textContent =
-            `Error: ${data.error}`;
-    }
-}
-</script>
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                document.getElementById("result").innerText =
+                    `BMI = ${data.bmi}  |  Status: ${data.status}`;
+            } 
+            catch (error) {
+                document.getElementById("result").innerText = "Error contacting API.";
+            }
+        }
+    </script>
+
 </body>
 </html>
